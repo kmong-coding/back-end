@@ -20,5 +20,7 @@ public class UserData {
     private String pw;      // 비밀번호
     private String nickname; // 사용자 이름
     private LocalDate birthDate; // 생년월일
-    private String role;     // 역할
+    private String region;     // 지역
+    private String hobby;
+    private String mbti;  
 }

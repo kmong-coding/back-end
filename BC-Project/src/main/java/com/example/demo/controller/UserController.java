@@ -55,12 +55,29 @@ public class UserController {
 
     // 사용자 생성 (회원가입)
     @PostMapping("/signup")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    	System.out.println("Received SignUpRequest: " + signUpRequest);
+        User user = new User();
+        
+        // DTO로부터 값 설정
+        user.setEmail(signUpRequest.getUserId()); // 이메일
+        user.setPassword(signUpRequest.getPw()); // 비밀번호
+        user.setUsername(signUpRequest.getNickname()); // 닉네임
+        user.setBirthDate(signUpRequest.getBirthDate()); // 생년월일
+        user.setRegion(signUpRequest.getRegion()); // 지역
+        user.setHobby(signUpRequest.getHobby()); // 취미
+        user.setMbti(signUpRequest.getMbti()); // MBTI
+        
+        // 추가적인 설정
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-        User createdUser = userRepository.save(user);  
+        user.encodePassword(); // 비밀번호 해시화
+
+        // User 객체 저장
+        User createdUser = userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
+
 
     // 로그인 처리
     @PostMapping("/login")
@@ -167,6 +184,20 @@ public class UserController {
         Response response = userDataService.disableMfa(jwtToken);
         return ResponseEntity.ok(response);
     }
+    
+ // 사용자 프로필 정보 조회
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile(@RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7); // JWT 토큰에서 'Bearer ' 부분 제거
+        User user = userDataService.getUserByToken(jwtToken); // 토큰을 통해 사용자 정보 조회
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 사용자 정보가 없으면 404 반환
+        }
+    }
+
 
 	public UserRepository getUserRepository() {
 		return userRepository;

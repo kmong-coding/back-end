@@ -1,15 +1,25 @@
 package com.example.demo.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.User; // User 엔티티 import
 import com.example.demo.dto.DisableMfaResponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.SignUpRequest;
 import com.example.demo.dto.SignUpResponse;
+import com.example.demo.repository.UserRepository; // UserRepository import
+import com.example.demo.utils.JwtUtil; // JwtUtil import
 
 @Service
 public class UserService {
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 주입
+
+    @Autowired
+    private JwtUtil jwtUtil; // JwtUtil 주입
 
     // 로그인 처리
     public LoginResponse login(LoginRequest loginRequest) {
@@ -44,5 +54,11 @@ public class UserService {
     public DisableMfaResponse disableTwoFactorAuth(String authorizationHeader) {
         // 2차 인증 비활성화 로직 구현
         return new DisableMfaResponse();
+    }
+
+    // JWT를 통해 사용자 정보 가져오기
+    public User getUserByToken(String token) {
+        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+        return userRepository.findById(userId).orElse(null); // 사용자 찾기
     }
 }

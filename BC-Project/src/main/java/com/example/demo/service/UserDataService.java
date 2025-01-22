@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.demo.User;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.MfaRequest;
@@ -27,5 +28,6 @@ public interface UserDataService {
 	public Response verifyPassword(String jwtToken, Password password);
 	public Response modifyPassword(String jwtToken, Password password);
 	public Response disableMfa(String jwtToken);
+	public User getUserByToken(String jwtToken);
 	
 }

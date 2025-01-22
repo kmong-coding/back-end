@@ -1,5 +1,7 @@
 package com.example.demo.loder;
 
+import java.time.LocalDate;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -30,11 +32,16 @@ public class InitialDataLoader implements CommandLineRunner {
         if (userRepository.findByUsername(envConfig.getInitialUsername()) == null) {
             User admin = new User();
             admin.setUsername(envConfig.getInitialUsername());
+            
             // 비밀번호 해시 처리 (PasswordUtil 사용)
             String rawPassword = envConfig.getInitialPassword();
             String hashedPassword = passwordUtil.hashPassword(rawPassword); // PasswordUtil 사용
             admin.setPassword(hashedPassword);
             admin.setSecretKey(envConfig.getInitialSecretKey());
+
+            // 생년월일과 이메일 설정
+            admin.setBirthDate(LocalDate.now()); // 오늘 날짜로 설정
+            admin.setEmail("test@test.com"); // 초기 이메일 설정
 
             // 사용자 저장
             userRepository.save(admin);

@@ -2,6 +2,9 @@ package com.example.demo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,9 +59,12 @@ public class User {
     @Column(name = "secret_key", nullable = false) // 비밀 키 추가
     private String secretKey; // JWT 비밀 키
 
+    @Column(name = "userUID", nullable = false, unique = true) // UUID 추가
+    private String userUID; // UUID 필드 추가
+
     // 생성자
     public User() {
-        // 기본 생성자
+        this.userUID = UUID.randomUUID().toString(); // UUID 자동 생성
     }
 
     // Getters and Setters
@@ -166,6 +172,10 @@ public class User {
         this.secretKey = secretKey;
     }
 
+    public String getUserUID() { // UUID 가져오기
+        return userUID;
+    }
+
     // 생성일 및 수정일 자동 설정
     @PrePersist
     protected void onCreate() {
@@ -176,5 +186,9 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    
+    public void encodePassword() {
+        this.password = new BCryptPasswordEncoder().encode(password);
     }
 }

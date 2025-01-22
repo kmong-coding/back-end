@@ -268,4 +268,11 @@ public class UserDataServiceImpl implements UserDataService {
 		return logger;
 	}
 
+
+	@Override
+	public User getUserByToken(String jwtToken) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

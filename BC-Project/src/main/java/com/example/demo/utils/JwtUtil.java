@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.config.EnvConfig;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -59,6 +60,16 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    // 사용자 ID 추출
+    public Long extractUserId(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("userId", Long.class); // userId 클레임에서 사용자 ID를 추출하여 반환
     }
 
     public Key getKey() {
